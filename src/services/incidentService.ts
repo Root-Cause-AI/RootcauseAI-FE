@@ -29,7 +29,7 @@ const incidentService = {
    * POST /api/incidents
    */
   createIncident: async (data: CreateIncidentRequest): Promise<Incident> => {
-    const response = await api.post<Incident>('/incidents', data);
+    const response = await api.post<Incident>('/api/incidents', data);
     return response.data;
   },
 
@@ -38,7 +38,7 @@ const incidentService = {
    * GET /api/dashboard/stats
    */
   getDashboardStats: async (): Promise<DashboardStats> => {
-    const response = await api.get<DashboardStats>('/dashboard/stats');
+    const response = await api.get<DashboardStats>('/api/dashboard/stats');
     return response.data;
   },
 
@@ -58,7 +58,7 @@ const incidentService = {
     }
     if (filters?.search) params.append('search', filters.search);
 
-    const response = await api.get<IncidentSummary[]>('/incidents', { params });
+    const response = await api.get<IncidentSummary[]>('/api/incidents', { params });
     return response.data;
   },
 
@@ -67,7 +67,7 @@ const incidentService = {
    * GET /api/incidents/{id}
    */
   getIncident: async (id: string): Promise<Incident> => {
-    const response = await api.get<Incident>(`/incidents/${id}`);
+    const response = await api.get<Incident>(`/api/incidents/${id}`);
     return response.data;
   },
 
@@ -76,7 +76,7 @@ const incidentService = {
    * POST /api/incidents/{id}/analyze
    */
   analyzeIncident: async (id: string): Promise<Report> => {
-    const response = await api.post<Report>(`/incidents/${id}/analyze`);
+    const response = await api.post<Report>(`/api/incidents/${id}/analyze`);
     return response.data;
   },
 
@@ -85,7 +85,7 @@ const incidentService = {
    * GET /api/incidents/{id}/report
    */
   getReport: async (id: string): Promise<Report> => {
-    const response = await api.get<Report>(`/incidents/${id}/report`);
+    const response = await api.get<Report>(`/api/incidents/${id}/report`);
     return response.data;
   },
 };
