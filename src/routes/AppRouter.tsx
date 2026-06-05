@@ -15,6 +15,8 @@ import CreateIncidentPage from '../pages/CreateIncidentPage';
 import IncidentDetailPage from '../pages/IncidentDetailPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import KnowledgeBasePage from '../pages/KnowledgeBasePage';
+import AnalyticsPage from '../pages/AnalyticsPage';
+import SettingsPage from '../pages/SettingsPage';
 
 export default function AppRouter() {
   return (
@@ -26,6 +28,8 @@ export default function AppRouter() {
           <Route path="/incidents/new" element={<CreateIncidentPage />} />
           <Route path="/incidents/:id" element={<IncidentDetailPage />} />
           <Route path="/knowledge" element={<KnowledgeBasePage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
