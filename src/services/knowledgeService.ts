@@ -19,7 +19,7 @@ const knowledgeService = {
     formData.append('title', title);
     formData.append('documentType', documentType);
 
-    const response = await api.post<KnowledgeDocument>('/knowledge/upload', formData, {
+    const response = await api.post<KnowledgeDocument>('/api/knowledge/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 120000, // 2 min timeout for large files + embedding generation
     });
@@ -32,7 +32,7 @@ const knowledgeService = {
    */
   getDocuments: async (type?: string): Promise<KnowledgeDocument[]> => {
     const params = type ? { type } : {};
-    const response = await api.get<KnowledgeDocument[]>('/knowledge/documents', { params });
+    const response = await api.get<KnowledgeDocument[]>('/api/knowledge/documents', { params });
     return response.data;
   },
 
@@ -41,7 +41,7 @@ const knowledgeService = {
    * GET /api/knowledge/documents/{id}
    */
   getDocument: async (id: string): Promise<KnowledgeDocument> => {
-    const response = await api.get<KnowledgeDocument>(`/knowledge/documents/${id}`);
+    const response = await api.get<KnowledgeDocument>(`/api/knowledge/documents/${id}`);
     return response.data;
   },
 
@@ -50,7 +50,7 @@ const knowledgeService = {
    * DELETE /api/knowledge/documents/{id}
    */
   deleteDocument: async (id: string): Promise<void> => {
-    await api.delete(`/knowledge/documents/${id}`);
+    await api.delete(`/api/knowledge/documents/${id}`);
   },
 
   /**
@@ -58,7 +58,7 @@ const knowledgeService = {
    * GET /api/knowledge/stats
    */
   getStats: async (): Promise<KnowledgeStats> => {
-    const response = await api.get<KnowledgeStats>('/knowledge/stats');
+    const response = await api.get<KnowledgeStats>('/api/knowledge/stats');
     return response.data;
   },
 
@@ -67,7 +67,7 @@ const knowledgeService = {
    * GET /api/knowledge/search
    */
   searchDocuments: async (query: string): Promise<KnowledgeDocument[]> => {
-    const response = await api.get<KnowledgeDocument[]>('/knowledge/search', {
+    const response = await api.get<KnowledgeDocument[]>('/api/knowledge/search', {
       params: { query },
     });
     return response.data;

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Card, CardDescription, CardTitle } from "../components/ui/card";
 import { BarChart3 } from "lucide-react";
 
 export default function AnalyticsPage() {
