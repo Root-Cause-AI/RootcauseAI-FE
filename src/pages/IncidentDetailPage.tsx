@@ -7,7 +7,7 @@ import incidentService from '../services/incidentService';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { AlertOctagon, Activity, ChevronLeft, Calendar, FileText, Search, Play, FileTerminal, BookOpen, Quote, ShieldAlert, Cpu } from 'lucide-react';
+import { CheckCircle, Activity, ChevronLeft, Calendar, FileText, Search, Play, FileTerminal, BookOpen, Quote, ShieldAlert, Cpu } from 'lucide-react';
 
 export default function IncidentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -151,7 +151,7 @@ export default function IncidentDetailPage() {
                     </div>
                     <div className="flex flex-col sm:items-end">
                       <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">AI Confidence</span>
-                      <Badge variant={report.confidenceScore > 80 ? 'default' : 'secondary'} className="px-3">
+                      <Badge variant={report.confidenceScore > 80 ? 'default' : 'outline'} className="px-3">
                         {report.confidenceScore}%
                       </Badge>
                     </div>
