@@ -117,3 +117,36 @@ export interface ApiError {
   message: string;
   timestamp: string;
 }
+
+/** Asynchronous investigation job tracking */
+export interface InvestigationJob {
+  id: string;
+  incidentId: string;
+  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  stage: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  errorMessage: string | null;
+  createdAt: string;
+}
+
+/** Observability trace for agentic stages and tool calls */
+export interface InvestigationTrace {
+  id: string;
+  jobId: string | null;
+  incidentId: string;
+  stage: string;
+  agentName: string | null;
+  toolName: string | null;
+  toolArguments: string | null;
+  summary: string | null;
+  outputData: string | null;
+  status: string;
+  durationMs: number | null;
+  llmLatencyMs: number | null;
+  tokensUsed: number | null;
+  errorMessage: string | null;
+  evidenceReferences: string | null;
+  createdAt: string;
+}
+

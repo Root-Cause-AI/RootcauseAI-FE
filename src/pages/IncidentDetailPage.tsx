@@ -1,9 +1,11 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useIncident, useReport } from '../hooks/useIncidents';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import incidentService from '../services/incidentService';
+import AgentInvestigationTraceView from '../components/AgentInvestigationTraceView';
+import type { InvestigationJob, InvestigationTrace } from '../types';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -21,18 +23,82 @@ export default function IncidentDetailPage() {
   } = useReport(id!, incident?.hasReport || false);
 
   const [analyzing, setAnalyzing] = useState(false);
+  const [job, setJob] = useState<InvestigationJob | null>(null);
+  const [traces, setTraces] = useState<InvestigationTrace[]>([]);
+  const [polling, setPolling] = useState(false);
+  const pollIntervalRef = useRef<number | null>(null);
+
+  // Load existing traces on mount
+  useEffect(() => {
+    if (!id) return;
+    incidentService.getIncidentTraces(id)
+      .then(data => setTraces(data))
+      .catch(err => console.debug('No previous traces found:', err));
+  }, [id]);
+
+  // Clean up polling interval
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+    };
+  }, []);
 
   const handleAnalyze = async () => {
     if (!id) return;
     setAnalyzing(true);
+    setPolling(true);
+
     try {
-      const data = await incidentService.analyzeIncident(id);
-      setReport(data);
+      // 1. Submit asynchronous multi-agent investigation job
+      const initialJob = await incidentService.analyzeIncidentAsync(id);
+      setJob(initialJob);
+
+      // 2. Poll job status and traces periodically
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+
+      pollIntervalRef.current = window.setInterval(async () => {
+        try {
+          const [currentJob, currentTraces] = await Promise.all([
+            incidentService.getJobStatus(id),
+            incidentService.getIncidentTraces(id),
+          ]);
+
+          setJob(currentJob);
+          setTraces(currentTraces);
+
+          if (currentJob.status === 'COMPLETED') {
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+            setPolling(false);
+            setAnalyzing(false);
+            const finalReport = await incidentService.getReport(id);
+            setReport(finalReport);
+          } else if (currentJob.status === 'FAILED') {
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+            setPolling(false);
+            setAnalyzing(false);
+            alert(`Investigation failed: ${currentJob.errorMessage || 'Unknown error'}`);
+          }
+        } catch (pollErr) {
+          console.error('Polling error:', pollErr);
+        }
+      }, 1500);
+
     } catch (err) {
-      console.error('Analysis failed:', err);
-      alert('Failed to analyze incident. Please try again.');
-    } finally {
-      setAnalyzing(false);
+      console.error('Async analysis submission failed, falling back to sync:', err);
+      try {
+        const data = await incidentService.analyzeIncident(id);
+        setReport(data);
+        const latestTraces = await incidentService.getIncidentTraces(id);
+        setTraces(latestTraces);
+      } catch (syncErr) {
+        console.error('Fallback sync analysis failed:', syncErr);
+        alert('Failed to analyze incident. Please verify server connectivity.');
+      } finally {
+        setAnalyzing(false);
+        setPolling(false);
+      }
     }
   };
 
@@ -125,6 +191,11 @@ export default function IncidentDetailPage() {
 
       {reportLoading && !analyzing && <LoadingSpinner message="Fetching investigation report..." />}
       {reportError && <ErrorMessage message={reportError} onRetry={fetchReport} />}
+
+      {/* Agentic Investigation Observability Traces */}
+      {(analyzing || traces.length > 0 || job) && (
+        <AgentInvestigationTraceView job={job} traces={traces} isPolling={polling} />
+      )}
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-6">
