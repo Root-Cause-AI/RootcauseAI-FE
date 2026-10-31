@@ -17,6 +17,7 @@ import { DashboardPage } from '../pages/DashboardPage';
 import KnowledgeBasePage from '../pages/KnowledgeBasePage';
 import AnalyticsPage from '../pages/AnalyticsPage';
 import SettingsPage from '../pages/SettingsPage';
+import HelpFaqPage from '../pages/HelpFaqPage';
 
 export default function AppRouter() {
   return (
@@ -30,6 +31,7 @@ export default function AppRouter() {
           <Route path="/knowledge" element={<KnowledgeBasePage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/help" element={<HelpFaqPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
