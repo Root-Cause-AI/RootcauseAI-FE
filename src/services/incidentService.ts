@@ -81,6 +81,42 @@ const incidentService = {
   },
 
   /**
+   * Submits an asynchronous investigation job.
+   * POST /api/incidents/{id}/analyze/async
+   */
+  analyzeIncidentAsync: async (id: string): Promise<import('../types').InvestigationJob> => {
+    const response = await api.post<import('../types').InvestigationJob>(`/api/incidents/${id}/analyze/async`);
+    return response.data;
+  },
+
+  /**
+   * Retrieves current investigation job status.
+   * GET /api/incidents/{id}/job
+   */
+  getJobStatus: async (id: string): Promise<import('../types').InvestigationJob> => {
+    const response = await api.get<import('../types').InvestigationJob>(`/api/incidents/${id}/job`);
+    return response.data;
+  },
+
+  /**
+   * Retrieves persistent execution traces for an incident.
+   * GET /api/incidents/{id}/traces
+   */
+  getIncidentTraces: async (id: string): Promise<import('../types').InvestigationTrace[]> => {
+    const response = await api.get<import('../types').InvestigationTrace[]>(`/api/incidents/${id}/traces`);
+    return response.data;
+  },
+
+  /**
+   * Retrieves persistent execution traces for a specific job.
+   * GET /api/incidents/jobs/{jobId}/traces
+   */
+  getJobTraces: async (jobId: string): Promise<import('../types').InvestigationTrace[]> => {
+    const response = await api.get<import('../types').InvestigationTrace[]>(`/api/incidents/jobs/${jobId}/traces`);
+    return response.data;
+  },
+
+  /**
    * Retrieves the investigation report for an incident.
    * GET /api/incidents/{id}/report
    */
